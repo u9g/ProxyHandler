@@ -1,12 +1,13 @@
 {
-  "name": "emptyrepo",
+  "name": "proxy-handler",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
     "build": "tsc index.ts"
   },
   "devDependencies": {
     "@types/node": "^16.7.1",
+    "proxy-handler": "file:.",
     "typescript": "^4.3.5"
   },
   "dependencies": {
@@ -15,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/u9g/ProxyHandler.git"
+    "url": "git+https://github.com/u9g/proxy-handler.git"
   },
   "keywords": [],
   "author": "u9g <winworkswow@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/u9g/ProxyHandler/issues"
+    "url": "https://github.com/u9g/proxy-handler/issues"
   },
-  "homepage": "https://github.com/u9g/ProxyHandler#readme",
+  "homepage": "https://github.com/u9g/proxy-handler#readme",
   "description": ""
 }
