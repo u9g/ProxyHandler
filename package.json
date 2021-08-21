@@ -1,13 +1,13 @@
 {
-  "name": "proxy-handler",
+  "name": "@u9g/proxy-handler",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "main": "lib",
   "scripts": {
     "build": "tsc"
   },
   "devDependencies": {
     "@types/node": "^16.7.1",
-    "proxy-handler": "file:.",
+    "@u9g/proxy-handler": "file:.",
     "typescript": "^4.3.5"
   },
   "dependencies": {
