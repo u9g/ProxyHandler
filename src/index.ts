@@ -9,7 +9,7 @@ interface MinecraftLogin {
 }
 
 interface ServerOptions {
-    loginHandler?: (client: Client) => MinecraftLogin;
+    loginHandler: (client: Client) => MinecraftLogin;
     serverOptions?: ServerOptions;
     clientOptions?: ClientOptions;
 }
@@ -99,10 +99,10 @@ export default class ProxyHandler extends (EventEmitter as new () => TypedEmitte
     }
 
     clientEnd (client: ServerClient): void {
-        this.server[client.id].end()
+        this.server?.clients[client.id]?.end()
     }
 
     clientIsOnline (client: ServerClient): boolean {
-        return !!this.server.clients[client.id]
+        return !!this.server?.clients[client.id]
     }
 }
