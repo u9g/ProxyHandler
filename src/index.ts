@@ -19,8 +19,8 @@ interface PacketMeta {
 }
 
 interface ProxyEvents {
-    incoming: (data: any, meta: PacketMeta, toClient: Client, toServer: ServerClient) => void;
-    outgoing: (data: any, meta: PacketMeta, toClient: Client, toServer: ServerClient) => void;
+    incoming: (data: any, meta: PacketMeta, toClient: ServerClient, toServer: Client) => void;
+    outgoing: (data: any, meta: PacketMeta, toClient: ServerClient, toServer: Client) => void;
 }
 
 export default class ProxyHandler extends (EventEmitter as new () => TypedEmitter<ProxyEvents>) {
@@ -57,30 +57,29 @@ export default class ProxyHandler extends (EventEmitter as new () => TypedEmitte
         })
 
         toServer.on('login', (data) => {
-            if (this.clientIsOnline(toClient)) {
-              const dimension = data.dimension === 0 ? -1 : 0
-              toClient.write('respawn', {
-                dimension,
-                difficulty: data.difficulty,
-                gamemode: data.gameMode,
-                levelType: data.levelType
-              })
-              toClient.write('respawn', {
-                dimension: data.dimension,
-                difficulty: data.difficulty,
-                gamemode: data.gameMode,
-                levelType: data.levelType
-              })
-            }
+            if (!this.clientIsOnline(toClient)) return
+            const dimension = data.dimension === 0 ? -1 : 0
+            toClient.write('respawn', {
+              dimension,
+              difficulty: data.difficulty,
+              gamemode: data.gameMode,
+              levelType: data.levelType
+            })
+            toClient.write('respawn', {
+              dimension: data.dimension,
+              difficulty: data.difficulty,
+              gamemode: data.gameMode,
+              levelType: data.levelType
+            })
           })
-      
+
           toClient.on('packet', (data, meta) => {
             if (!this.clientIsOnline(toClient)) return
             if (toServer.state === States.PLAY && meta.state === States.PLAY) {
-                this.emit('outgoing', data, meta, toServer, toClient)
+              this.emit('outgoing', data, meta, toClient, toServer)
             }
           })
-      
+
           toServer.on('packet', (data, meta) => {
             if (this.clientIsOnline(toClient)) return
             if (meta.name === 'disconnect') {
@@ -91,13 +90,12 @@ export default class ProxyHandler extends (EventEmitter as new () => TypedEmitte
                 toClient.compressionThreshold = data.threshold // Set compression
                 return
               }
-              this.emit('incoming', data, meta, toServer, toClient)
+              this.emit('incoming', data, meta, toClient, toServer)
             }
           })
-      
           toClient.once('end', () => this.clientEnd(toClient))
-    }
-
+        }
+        
     clientEnd (client: ServerClient): void {
         this.server?.clients[client.id]?.end()
     }
