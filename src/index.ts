@@ -77,7 +77,7 @@ export default class ProxyHandler extends (EventEmitter as new () => TypedEmitte
     })
 
     toServer.on('packet', (data, meta) => {
-      if (this.clientIsOnline(toClient)) return
+      if (!this.clientIsOnline(toClient)) return
       if (meta.name === 'disconnect') {
         toClient.write('kick_disconnect', data)
       }
