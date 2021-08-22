@@ -1,4 +1,4 @@
-import { Client, ClientOptions as protocolClientOptions, createClient, createServer, Server, ServerClient, States, ServerOptions as protocolServerOptions } from 'minecraft-protocol'
+import { Client, ClientOptions as protocolClientOptions, createClient, createServer, Server, ServerClient, States, ServerOptions as protocolServerOptions, PacketMeta } from 'minecraft-protocol'
 import TypedEmitter from 'typed-emitter'
 import { EventEmitter } from 'events'
 
@@ -12,10 +12,6 @@ interface ServerOptions {
   loginHandler: (client: Client) => MinecraftLogin
   serverOptions?: protocolServerOptions
   clientOptions?: Partial<protocolClientOptions>
-}
-
-interface PacketMeta {
-  name: string
 }
 
 interface ProxyEvents {
