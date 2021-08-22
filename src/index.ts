@@ -1,4 +1,4 @@
-import { Client, ClientOptions as protocolClientOptions, createClient, createServer, Server, ServerClient, States, ServerOptions as protocolServerOptions, PacketMeta } from 'minecraft-protocol'
+import { Client, ClientOptions as protocolClientOptions, createClient, createServer, Server, ServerClient, states, ServerOptions as protocolServerOptions, PacketMeta } from 'minecraft-protocol'
 import TypedEmitter from 'typed-emitter'
 import { EventEmitter } from 'events'
 
@@ -71,7 +71,7 @@ export default class ProxyHandler extends (EventEmitter as new () => TypedEmitte
 
     toClient.on('packet', (data, meta) => {
       if (!this.clientIsOnline(toClient)) return
-      if (toServer.state === States.PLAY && meta.state === States.PLAY) {
+      if (toServer.state === states.PLAY && meta.state === states.PLAY) {
         this.emit('outgoing', data, meta, toClient, toServer)
       }
     })
@@ -81,7 +81,7 @@ export default class ProxyHandler extends (EventEmitter as new () => TypedEmitte
       if (meta.name === 'disconnect') {
         toClient.write('kick_disconnect', data)
       }
-      if (meta.state === States.PLAY && toClient.state === States.PLAY) {
+      if (meta.state === states.PLAY && toClient.state === states.PLAY) {
         if (meta.name === 'set_compression') {
           toClient.compressionThreshold = data.threshold // Set compression
           return
