@@ -22,10 +22,12 @@ interface ProxyEvents {
 export default class ProxyHandler extends (EventEmitter as new () => TypedEmitter<ProxyEvents>) {
   options: ServerOptions
   server?: Server
+  toServerClients: Map<number, Client>
 
   constructor (options: ServerOptions) {
     super()
     this.options = options
+    this.toServerClients = new Map<number, Client>()
     this.server = createServer({
       'online-mode': true,
       keepAlive: false,
@@ -51,6 +53,8 @@ export default class ProxyHandler extends (EventEmitter as new () => TypedEmitte
       keepAlive: false,
       ...this.options.loginHandler(toClient)
     })
+
+    this.toServerClients.set(toClient.id, toServer)
 
     toServer.on('login', (data) => {
       if (!this.clientIsOnline(toClient)) return
@@ -93,7 +97,8 @@ export default class ProxyHandler extends (EventEmitter as new () => TypedEmitte
   }
 
   clientEnd (client: ServerClient): void {
-    this.server?.clients[client.id]?.end()
+    this.toServerClients.get(client.id)?.end()
+    this.toServerClients.delete(client.id)
   }
 
   clientIsOnline (client: ServerClient): boolean {
