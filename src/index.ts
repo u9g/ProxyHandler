@@ -17,6 +17,8 @@ interface ServerOptions {
 interface ProxyEvents {
   incoming: (data: any, meta: PacketMeta, toClient: ServerClient, toServer: Client) => void
   outgoing: (data: any, meta: PacketMeta, toClient: ServerClient, toServer: Client) => void
+  start: (toClient: ServerClient, toServer: Client) => void
+  end: (username: string) => void
 }
 
 export default class ProxyHandler extends (EventEmitter as new () => TypedEmitter<ProxyEvents>) {
@@ -58,6 +60,7 @@ export default class ProxyHandler extends (EventEmitter as new () => TypedEmitte
 
     toServer.on('login', (data) => {
       if (!this.clientIsOnline(toClient)) return
+      this.emit('start', toClient, toServer)
       const dimension = data.dimension === 0 ? -1 : 0
       toClient.write('respawn', {
         dimension,
@@ -93,7 +96,10 @@ export default class ProxyHandler extends (EventEmitter as new () => TypedEmitte
         this.emit('incoming', data, meta, toClient, toServer)
       }
     })
-    toClient.once('end', () => this.clientEnd(toClient))
+    toClient.once('end', () => {
+      this.emit('end', toServer.username)
+      this.clientEnd(toClient)
+    })
   }
 
   clientEnd (client: ServerClient): void {
